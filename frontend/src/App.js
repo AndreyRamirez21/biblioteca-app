@@ -10,6 +10,7 @@ import CategoryList from './components/CategoryList';
 import CategoryForm from './components/CategoryForm';
 import Home from './components/Home';
 import './App.css';
+import logo from './assets/logo.png';
 
 function App() {
   return (
@@ -18,24 +19,16 @@ function App() {
         <nav className="navbar">
           <div className="nav-container">
             <Link to="/" className="nav-logo">
-              📚 Biblioteca Digital
+              <img src={logo} alt="logo" className="logo-img" />
+              <span className="logo-text">Biblioteca Digital</span>
             </Link>
+
             <ul className="nav-menu">
-              <li className="nav-item">
-                <Link to="/" className="nav-link">Inicio</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/users" className="nav-link">Usuarios</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/books" className="nav-link">Libros</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/categories" className="nav-link">Categorías</Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/loans" className="nav-link">Préstamos</Link>
-              </li>
+              <li><Link to="/" className="nav-link">📚 Inicio</Link></li>
+              <li><Link to="/users" className="nav-link">Usuarios</Link></li>
+              <li><Link to="/books" className="nav-link">Libros</Link></li>
+              <li><Link to="/categories" className="nav-link">Categorías</Link></li>
+              <li><Link to="/loans" className="nav-link">Préstamos</Link></li>
             </ul>
           </div>
         </nav>
