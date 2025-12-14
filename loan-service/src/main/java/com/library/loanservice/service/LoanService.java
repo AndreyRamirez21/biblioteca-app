@@ -91,6 +91,12 @@ public class LoanService {
         Loan updatedLoan = loanRepository.save(loan);
         return convertToDTO(updatedLoan);
     }
+    public List<LoanDTO> getActiveLoans() {
+        return loanRepository.findByStatus(Loan.LoanStatus.ACTIVE)
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 
     public void deleteLoan(Long id) {
         loanRepository.deleteById(id);

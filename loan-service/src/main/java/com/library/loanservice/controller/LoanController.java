@@ -52,4 +52,10 @@ public class LoanController {
         loanService.deleteLoan(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/active")
+    public ResponseEntity<List<LoanDTO>> getActiveLoans() {
+        return ResponseEntity.ok(loanService.getActiveLoans());
+    }
+
 }
+

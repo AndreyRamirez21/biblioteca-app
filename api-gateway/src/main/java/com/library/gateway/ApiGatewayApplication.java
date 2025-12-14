@@ -30,6 +30,9 @@ public class ApiGatewayApplication {
                 .route("loan-service", r -> r
                         .path("/api/loans/**")
                         .uri("http://loan-service:8083"))
+                .route("notification-service", r -> r
+                        .path("/api/notifications/**")
+                        .uri("http://notification-service:8084"))
                 .build();
     }
 

@@ -80,6 +80,30 @@ services:
       - library-network
     restart: on-failure
 
+  # Notification Service (NUEVO)
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    container_name: notification-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/library_notifications?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+      # Configuración de Mailtrap desde variables de entorno
+      SPRING_MAIL_HOST: sandbox.smtp.mailtrap.io
+      SPRING_MAIL_PORT: 2525
+      SPRING_MAIL_USERNAME: ${MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${MAIL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - library-network
+    restart: on-failure
+
   # API Gateway
   api-gateway:
     build:
@@ -92,6 +116,7 @@ services:
       - user-service
       - book-service
       - loan-service
+      - notification-service
     networks:
       - library-network
     restart: on-failure

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import NotificationCard from './NotificationCard';
 
 function Home() {
   const navigate = useNavigate();
@@ -50,6 +51,8 @@ function Home() {
             <p className="home-card-description">{module.description}</p>
           </div>
         ))}
+
+        <NotificationCard />  {/* ← IMPORTANTE */}
       </div>
     </div>
   );
