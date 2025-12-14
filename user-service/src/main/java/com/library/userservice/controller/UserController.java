@@ -1,5 +1,7 @@
 package com.library.userservice.controller;
 
+import com.library.userservice.dto.LoginDTO;
+import com.library.userservice.dto.LoginResponseDTO;
 import com.library.userservice.dto.UserDTO;
 import com.library.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,19 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginDTO loginDTO) {
+        LoginResponseDTO response = userService.login(loginDTO);
+
+        if (response.isSuccess()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {

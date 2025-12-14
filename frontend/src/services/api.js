@@ -9,6 +9,13 @@ const api = axios.create({
   },
 });
 
+
+
+// AUTH API
+export const authAPI = {
+  login: (credentials) => api.post('/users/login', credentials),
+};
+
 // Users API
 export const usersAPI = {
   getAll: () => api.get('/users'),

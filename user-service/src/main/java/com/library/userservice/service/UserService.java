@@ -1,5 +1,7 @@
 package com.library.userservice.service;
 
+import com.library.userservice.dto.LoginDTO;
+import com.library.userservice.dto.LoginResponseDTO;
 import com.library.userservice.dto.UserDTO;
 import com.library.userservice.entity.User;
 import com.library.userservice.repository.UserRepository;
@@ -7,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
+
 import java.util.stream.Collectors;
 
 @Service
@@ -15,6 +19,35 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    public LoginResponseDTO login(LoginDTO loginDTO) {
+        Optional<User> userOpt = userRepository.findByEmail(loginDTO.getEmail());
+
+        if (userOpt.isEmpty()) {
+            return new LoginResponseDTO(false, "Usuario no encontrado", null);
+        }
+
+        User user = userOpt.get();
+
+        // Verificar contraseña (en producción usar BCrypt)
+        if (!user.getPassword().equals(loginDTO.getPassword())) {
+            return new LoginResponseDTO(false, "Contraseña incorrecta", null);
+        }
+
+        // Verificar que sea ADMIN
+        if (!"ADMIN".equals(user.getRole())) {
+            return new LoginResponseDTO(false, "Acceso denegado. Solo administradores", null);
+        }
+
+        // Verificar que esté activo
+        if (!user.getActive()) {
+            return new LoginResponseDTO(false, "Usuario inactivo", null);
+        }
+
+        UserDTO userDTO = convertToDTO(user);
+        return new LoginResponseDTO(true, "Login exitoso", userDTO);
+    }
+
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
