@@ -73,23 +73,11 @@ public class NotificationService {
         return notificationRepository.findByStatus(NotificationStatus.PENDING);
     }
 
-
-
     @Transactional
     public void sendPendingNotifications() {
         List<Notification> pending = getPendingNotifications();
         log.info("Sending {} pending notifications", pending.size());
 
         pending.forEach(notification -> sendNotification(notification.getId()));
-    }
-
-    public List<LoanDTO> fetchActiveLoans() {
-        ResponseEntity<List<LoanDTO>> response = restTemplate.exchange(
-                "http://loan-service/api/loans/active",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<LoanDTO>>() {}
-        );
-        return response.getBody();
     }
 }
