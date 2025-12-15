@@ -11,13 +11,12 @@ import CategoryForm from './components/CategoryForm';
 import Home from './components/Home';
 import Login from './components/Login';
 import './App.css';
-
+import logo from './assets/logo.png';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Verificar si ya hay sesión al cargar la app
   useEffect(() => {
     const storedAuth = localStorage.getItem('isAuthenticated');
     const storedUser = localStorage.getItem('user');
@@ -40,11 +39,8 @@ function App() {
     setUser(null);
   };
 
-  // Componente para proteger rutas
   const ProtectedRoute = ({ children }) => {
-    if (!isAuthenticated) {
-      return <Navigate to="/login" replace />;
-    }
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
     return children;
   };
 
@@ -54,28 +50,20 @@ function App() {
         {isAuthenticated && (
           <nav className="navbar">
             <div className="nav-container">
-              <Link to="/" className="nav-logo">
-                📚 Biblioteca Digital
+              <Link to="/" className="nav-logo" aria-label="Inicio">
+                <img src={logo} alt="Biblioteca" className="nav-logo-img" />
+                <span className="nav-logo-text">Biblioteca Digital</span>
               </Link>
+
               <ul className="nav-menu">
-                <li className="nav-item">
-                  <Link to="/" className="nav-link">Inicio</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/users" className="nav-link">Usuarios</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/books" className="nav-link">Libros</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/categories" className="nav-link">Categorías</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/loans" className="nav-link">Préstamos</Link>
-                </li>
-                <li className="nav-item">
+                <li><Link to="/" className="nav-link">Inicio</Link></li>
+                <li><Link to="/users" className="nav-link">Usuarios</Link></li>
+                <li><Link to="/books" className="nav-link">Libros</Link></li>
+                <li><Link to="/categories" className="nav-link">Categorías</Link></li>
+                <li><Link to="/loans" className="nav-link">Préstamos</Link></li>
+                <li>
                   <button onClick={handleLogout} className="nav-link logout-btn">
-                    Cerrar Sesión ({user?.firstName})
+                    Cerrar Sesión {user?.firstName ? `(${user.firstName})` : ''}
                   </button>
                 </li>
               </ul>
@@ -85,17 +73,10 @@ function App() {
 
         <div className={isAuthenticated ? "main-content" : ""}>
           <Routes>
-            {/* Ruta de Login */}
-            <Route
-              path="/login"
-              element={
-                isAuthenticated ?
-                <Navigate to="/" replace /> :
-                <Login onLogin={handleLogin} />
-              }
-            />
+            <Route path="/login" element={
+              isAuthenticated ? <Navigate to="/" replace /> : <Login onLogin={handleLogin} />
+            }/>
 
-            {/* Rutas protegidas */}
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/users" element={<ProtectedRoute><UserList /></ProtectedRoute>} />
             <Route path="/users/new" element={<ProtectedRoute><UserForm /></ProtectedRoute>} />
@@ -109,7 +90,6 @@ function App() {
             <Route path="/loans" element={<ProtectedRoute><LoanList /></ProtectedRoute>} />
             <Route path="/loans/new" element={<ProtectedRoute><LoanForm /></ProtectedRoute>} />
 
-            {/* Redirección por defecto */}
             <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} replace />} />
           </Routes>
         </div>

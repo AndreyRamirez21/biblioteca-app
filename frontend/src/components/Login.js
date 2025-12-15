@@ -1,22 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authAPI } from '../services/api';
-import './Login.css';
+import '../components/Login.css';
+import logo from '../assets/logo.png';
 
 function Login({ onLogin }) {
   const navigate = useNavigate();
-  const [credentials, setCredentials] = useState({
-    email: '',
-    password: ''
-  });
+  const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    setCredentials({
-      ...credentials,
-      [e.target.name]: e.target.value
-    });
+    setCredentials(prev => ({ ...prev, [e.target.name]: e.target.value }));
     setError('');
   };
 
@@ -28,21 +23,16 @@ function Login({ onLogin }) {
     try {
       const response = await authAPI.login(credentials);
 
-      if (response.data.success) {
-        // Guardar usuario en localStorage
+      if (response?.data?.success) {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('isAuthenticated', 'true');
-
-        // Llamar al callback de login
-        onLogin(response.data.user);
-
-        // Redirigir al home
+        if (onLogin) onLogin(response.data.user);
         navigate('/');
       } else {
-        setError(response.data.message);
+        setError(response?.data?.message || 'Credenciales inválidas');
       }
     } catch (err) {
-      if (err.response && err.response.data) {
+      if (err?.response?.data) {
         setError(err.response.data.message || 'Error al iniciar sesión');
       } else {
         setError('Error de conexión. Verifica que el servidor esté funcionando.');
@@ -54,23 +44,21 @@ function Login({ onLogin }) {
 
   return (
     <div className="login-container">
-      <div className="login-box">
+      <div className="login-box" role="main" aria-labelledby="login-title">
         <div className="login-header">
-          <div className="login-icon">📚</div>
-          <h1>Biblioteca Digital</h1>
+          <img src={logo} alt="Logo Biblioteca" className="login-logo" />
+          <h1 id="login-title">Biblioteca Digital</h1>
           <p>Acceso Administrativo</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
-          {error && (
-            <div className="error-message">
-              ⚠️ {error}
-            </div>
-          )}
+        <form onSubmit={handleSubmit} className="login-form" noValidate>
+          {error && <div className="error-message" role="alert">⚠️ {error}</div>}
 
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="email">Email</label>
             <input
+              id="email"
+              className="form-control"
               type="email"
               name="email"
               value={credentials.email}
@@ -82,8 +70,10 @@ function Login({ onLogin }) {
           </div>
 
           <div className="form-group">
-            <label>Contraseña</label>
+            <label htmlFor="password">Contraseña</label>
             <input
+              id="password"
+              className="form-control"
               type="password"
               name="password"
               value={credentials.password}
@@ -97,6 +87,7 @@ function Login({ onLogin }) {
             type="submit"
             className="login-button"
             disabled={loading}
+            aria-busy={loading}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
